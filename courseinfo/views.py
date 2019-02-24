@@ -1,6 +1,4 @@
-from django.shortcuts import render
-from django.http.response import HttpResponse
-from django.template import loader
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.views import View
 
 from .models import (
@@ -10,19 +8,7 @@ from .models import (
     Semester,
     Student,
     Registration,
-
-
 )
-
-
-# def instructor_list_view(request):
-#     instructor_list = Instructor.objects.all()
-#     # instructor_list = Instructor.objects.none()
-#     template = loader.get_template(
-#         'courseinfo/instructor_list.html')
-#     context = {'instructor_list': instructor_list}
-#     output = template.render(context)
-#     return HttpResponse(output)
 
 
 class InstructorList(View):
@@ -32,6 +18,20 @@ class InstructorList(View):
             request,
             'courseinfo/instructor_list.html',
             {'instructor_list': Instructor.objects.all()}
+        )
+
+
+class InstructorDetail(View):
+
+    def get(self, request, pk):
+        instructor = get_object_or_404(
+            Instructor,
+            pk=pk
+        )
+        section_list = instructor.sections.all()
+        return render_to_response(
+            'courseinfo/instructor_detail.html',
+            {'instructor': instructor, 'section_list': section_list}
         )
 
 
@@ -45,6 +45,27 @@ class SectionList(View):
         )
 
 
+class SectionDetail(View):
+
+    def get(self, request, pk):
+        section = get_object_or_404(
+            Section,
+            pk=pk
+        )
+        semester = section.semester
+        course = section.course
+        instructor = section.instructor
+        registration_list = section.registrations.add()
+        return render_to_response(
+            'courseinfo/section_detail.html',
+            {'section': section,
+             'semester': semester,
+             'course': course,
+             'instructor': instructor,
+             'registration_list': registration_list}
+        )
+
+
 class CourseList(View):
 
     def get(self, request):
@@ -52,6 +73,22 @@ class CourseList(View):
             request,
             'courseinfo/course_list.html',
             {'course_list': Course.objects.all()}
+        )
+
+
+class CourseDetail(View):
+
+    def get(self, request, pk):
+        course = get_object_or_404(
+            Course,
+            pk=pk
+        )
+        section_list = course.sections.all()
+        return render_to_response(
+            'courseinfo/course_detail.html',
+            {'course': course,
+             'section_list': section_list
+            }
         )
 
 
@@ -65,6 +102,22 @@ class SemesterList(View):
         )
 
 
+class SemesterDetail(View):
+
+    def get(self, request, pk):
+        semester = get_object_or_404(
+            Semester,
+            pk=pk
+        )
+        section_list = semester.sections.all()
+        return render_to_response(
+            'courseinfo/semester_detail.html',
+            {'semester': semester,
+             'section_list': section_list
+            }
+        )
+
+
 class StudentList(View):
 
     def get(self, request):
@@ -75,6 +128,21 @@ class StudentList(View):
         )
 
 
+class StudentDetail(View):
+
+    def get(self, request, pk):
+        student = get_object_or_404(
+            Student,
+            pk=pk
+        )
+        registration_list = student.registrations.add()
+        return render_to_response(
+            'courseinfo/student_detail.html',
+            {'student': student,
+             'registration_list': registration_list}
+        )
+
+
 class RegistrationList(View):
 
     def get(self, request):
@@ -82,4 +150,18 @@ class RegistrationList(View):
             request,
             'courseinfo/registration_list.html',
             {'registration_list': Registration.objects.all()}
+        )
+
+
+class RegistrationDetail(View):
+
+    def get(self, request, pk):
+        registration = get_object_or_404(
+            Registration,
+            pk=pk
+        )
+
+        return render_to_response(
+            'courseinfo/registration_detail.html',
+            {'registration': registration}
         )
