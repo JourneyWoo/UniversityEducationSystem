@@ -35,54 +35,51 @@ class InstructorList(View):
         )
 
 
-def section_list_view(request):
-    section_list = Section.objects.all()
-    # section_list = Section.objects.none()
-    template = loader.get_template(
-        'courseinfo/section_list.html')
-    context = {'section_list': section_list}
-    output = template.render(context)
-    return HttpResponse(output)
+class SectionList(View):
+
+    def get(self, request):
+        return render(
+            request,
+            'courseinfo/section_list.html',
+            {'section_list': Section.objects.all()}
+        )
 
 
-def course_list_view(request):
-    course_list = Course.objects.all()
-    # course_list = Course.objects.none()
-    template = loader.get_template(
-        'courseinfo/course_list.html')
-    context = {'course_list': course_list}
-    output = template.render(context)
-    return HttpResponse(output)
+class CourseList(View):
+
+    def get(self, request):
+        return render(
+            request,
+            'courseinfo/course_list.html',
+            {'course_list': Course.objects.all()}
+        )
 
 
-def semester_list_view(request):
-    semester_list = Semester.objects.all()
-    # semester_list = Semester.objects.none()
-    template = loader.get_template(
-        'courseinfo/semester_list.html')
-    context = {'semester_list': semester_list}
-    output = template.render(context)
-    return HttpResponse(output)
+class SemesterList(View):
+
+    def get(self, request):
+        return render(
+            request,
+            'courseinfo/semester_list.html',
+            {'semester_list': Semester.objects.all()}
+        )
 
 
-def student_list_view(request):
-    student_list = Student.objects.all()
-    # student_list = Student.objects.none()
-    template = loader.get_template(
-        'courseinfo/student_list.html')
-    context = {'student_list': student_list}
-    output = template.render(context)
-    return HttpResponse(output)
+class StudentList(View):
+
+    def get(self, request):
+        return render(
+            request,
+            'courseinfo/student_list.html',
+            {'student_list': Student.objects.all()}
+        )
 
 
-def registration_list_view(request):
-    registration_list = Registration.objects.all()
-    # registration_list = Registration.objects.none()
-    template = loader.get_template(
-        'courseinfo/registration_list.html')
-    context = {'registration_list': registration_list}
-    output = template.render(context)
-    return HttpResponse(output)
+class RegistrationList(View):
 
-
-
+    def get(self, request):
+        return render(
+            request,
+            'courseinfo/registration_list.html',
+            {'registration_list': Registration.objects.all()}
+        )
