@@ -6,7 +6,6 @@
 
 {% block content %}
     <h2>{{ semester }}</h2>
-
     <section>
         <table>
             <tr>
@@ -17,16 +16,15 @@
     </section>
 
     <section>
-        <h3>Section</h3>
+        <h3>Sections</h3>
         <ul>
             {% for section in section_list %}
                 <li>
                     <a href="">{{ section }}</a>
                 </li>
             {% empty %}
-                <li><em>There are currently no sections for this Semester.</em></li>
+                <li><em>There are currently no sections for this semester.</em></li>
             {% endfor %}
         </ul>
     </section>
-
 {% endblock %}

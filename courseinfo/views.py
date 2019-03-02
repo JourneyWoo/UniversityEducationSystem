@@ -55,7 +55,7 @@ class SectionDetail(View):
         semester = section.semester
         course = section.course
         instructor = section.instructor
-        registration_list = section.registrations.add()
+        registration_list = section.registrations.all()
         return render_to_response(
             'courseinfo/section_detail.html',
             {'section': section,
@@ -64,7 +64,6 @@ class SectionDetail(View):
              'instructor': instructor,
              'registration_list': registration_list}
         )
-
 
 class CourseList(View):
 
@@ -86,9 +85,7 @@ class CourseDetail(View):
         section_list = course.sections.all()
         return render_to_response(
             'courseinfo/course_detail.html',
-            {'course': course,
-             'section_list': section_list
-            }
+            {'course': course, 'section_list': section_list}
         )
 
 
@@ -112,9 +109,7 @@ class SemesterDetail(View):
         section_list = semester.sections.all()
         return render_to_response(
             'courseinfo/semester_detail.html',
-            {'semester': semester,
-             'section_list': section_list
-            }
+            {'semester': semester, 'section_list': section_list}
         )
 
 
@@ -135,11 +130,10 @@ class StudentDetail(View):
             Student,
             pk=pk
         )
-        registration_list = student.registrations.add()
+        registration_list = student.registrations.all()
         return render_to_response(
             'courseinfo/student_detail.html',
-            {'student': student,
-             'registration_list': registration_list}
+            {'student': student, 'registration_list': registration_list}
         )
 
 
@@ -160,8 +154,7 @@ class RegistrationDetail(View):
             Registration,
             pk=pk
         )
-
         return render_to_response(
             'courseinfo/registration_detail.html',
-            {'registration': registration}
+            {'registration': registration, 'student': registration.student, 'section': registration.section}
         )
