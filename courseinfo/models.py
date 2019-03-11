@@ -90,6 +90,7 @@ class Section(models.Model):
 
     class Meta:
         ordering = ['course__course_number', 'section_name', 'semester__semester_name']
+        unique_together = (('semester', 'course', 'section_name'),)
 
 
 class Registration(models.Model):

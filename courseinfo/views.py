@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.views import View
 
+from courseinfo.forms import InstructorForm, SectionForm, CourseForm, SemesterForm, StudentForm, RegistrationForm
+from courseinfo.utils import ObjectCreateMixin
 from .models import (
     Instructor,
     Section,
@@ -29,10 +31,16 @@ class InstructorDetail(View):
             pk=pk
         )
         section_list = instructor.sections.all()
-        return render_to_response(
+        return render(
+            request,
             'courseinfo/instructor_detail.html',
             {'instructor': instructor, 'section_list': section_list}
         )
+
+
+class InstructorCreate(ObjectCreateMixin, View):
+    form_class = InstructorForm
+    template_name = 'courseinfo/instructor_form.html'
 
 
 class SectionList(View):
@@ -56,7 +64,8 @@ class SectionDetail(View):
         course = section.course
         instructor = section.instructor
         registration_list = section.registrations.all()
-        return render_to_response(
+        return render(
+            request,
             'courseinfo/section_detail.html',
             {'section': section,
              'semester': semester,
@@ -64,6 +73,12 @@ class SectionDetail(View):
              'instructor': instructor,
              'registration_list': registration_list}
         )
+
+
+class SectionCreate(ObjectCreateMixin, View):
+    form_class = SectionForm
+    template_name = 'courseinfo/section_form.html'
+
 
 class CourseList(View):
 
@@ -83,10 +98,16 @@ class CourseDetail(View):
             pk=pk
         )
         section_list = course.sections.all()
-        return render_to_response(
+        return render(
+            request,
             'courseinfo/course_detail.html',
             {'course': course, 'section_list': section_list}
         )
+
+
+class CourseCreate(ObjectCreateMixin, View):
+    form_class = CourseForm
+    template_name = 'courseinfo/course_form.html'
 
 
 class SemesterList(View):
@@ -107,10 +128,16 @@ class SemesterDetail(View):
             pk=pk
         )
         section_list = semester.sections.all()
-        return render_to_response(
+        return render(
+            request,
             'courseinfo/semester_detail.html',
             {'semester': semester, 'section_list': section_list}
         )
+
+
+class SemesterCreate(ObjectCreateMixin, View):
+    form_class = SemesterForm
+    template_name = 'courseinfo/semester_form.html'
 
 
 class StudentList(View):
@@ -131,10 +158,16 @@ class StudentDetail(View):
             pk=pk
         )
         registration_list = student.registrations.all()
-        return render_to_response(
+        return render(
+            request,
             'courseinfo/student_detail.html',
             {'student': student, 'registration_list': registration_list}
         )
+
+
+class StudentCreate(ObjectCreateMixin, View):
+    form_class = StudentForm
+    template_name = 'courseinfo/student_form.html'
 
 
 class RegistrationList(View):
@@ -154,7 +187,13 @@ class RegistrationDetail(View):
             Registration,
             pk=pk
         )
-        return render_to_response(
+        return render(
+            request,
             'courseinfo/registration_detail.html',
             {'registration': registration, 'student': registration.student, 'section': registration.section}
         )
+
+
+class RegistrationCreate(ObjectCreateMixin, View):
+    form_class = RegistrationForm
+    template_name = 'courseinfo/registration_form.html'
