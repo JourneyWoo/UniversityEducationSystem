@@ -6,7 +6,13 @@
 
 {% block content %}
     <h2>{{ registration }}</h2>
-
+    <ul>
+        <li>
+            <a href="{{ registration.get_update_url }}">
+                Edit Registration
+            </a>
+        </li>
+    </ul>
     <section>
         <table>
             <tr>

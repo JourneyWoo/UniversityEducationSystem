@@ -6,6 +6,13 @@
 
 {% block content %}
     <h2>{{ course }}</h2>
+    <ul>
+        <li>
+            <a href="{{ course.get_update_url }}">
+                Edit Course
+            </a>
+        </li>
+    </ul>
 
     <section>
         <table>
