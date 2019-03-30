@@ -1,3 +1,4 @@
+from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.views import View
 
@@ -14,12 +15,49 @@ from .models import (
 
 
 class InstructorList(View):
+    page_kwarg = 'page'
+    paginate_by = 25
+    template_name = 'courseinfo/instructor_list.html'
 
     def get(self, request):
+        instructors = Instructor.objects.all()
+        paginator = Paginator(
+            instructors,
+            self.paginate_by
+        )
+        page_number = request.GET.get(
+            self.page_kwarg
+        )
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(
+                paginator.num_pages)
+        if page.has_previous():
+            prev_url = "?{pkw}={n}".format(
+                pkw=self.page_kwarg,
+                n=page.previous_page_number())
+        else:
+            prev_url = None
+        if page.has_next():
+            next_url = "?{pkw}={n}".format(
+                pkw=self.page_kwarg,
+                n=page.next_page_number())
+        else:
+            next_url = None
+        context = {
+            'is_paginated':
+                page.has_other_pages(),
+            'next_page_url': next_url,
+            'paginator': paginator,
+            'previous_page_url': prev_url,
+            'instructor_list': page,
+        }
+
         return render(
-            request,
-            'courseinfo/instructor_list.html',
-            {'instructor_list': Instructor.objects.all()}
+            request, self.template_name, context
         )
 
 
@@ -297,12 +335,49 @@ class SemesterCreate(ObjectCreateMixin, View):
 
 
 class StudentList(View):
+    page_kwarg = 'page'
+    paginate_by = 25
+    template_name = 'courseinfo/student_list.html'
 
     def get(self, request):
+        students = Student.objects.all()
+        paginator = Paginator(
+            students,
+            self.paginate_by
+        )
+        page_number = request.GET.get(
+            self.page_kwarg
+        )
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(
+                paginator.num_pages)
+        if page.has_previous():
+            prev_url = "?{pkw}={n}".format(
+                pkw=self.page_kwarg,
+                n=page.previous_page_number())
+        else:
+            prev_url = None
+        if page.has_next():
+            next_url = "?{pkw}={n}".format(
+                pkw=self.page_kwarg,
+                n=page.next_page_number())
+        else:
+            next_url = None
+        context = {
+            'is_paginated':
+                page.has_other_pages(),
+            'next_page_url': next_url,
+            'paginator': paginator,
+            'previous_page_url': prev_url,
+            'student_list': page,
+        }
+
         return render(
-            request,
-            'courseinfo/student_list.html',
-            {'student_list': Student.objects.all()}
+            request, self.template_name, context
         )
 
 
@@ -431,3 +506,202 @@ class RegistrationUpdate(View):
                 request,
                 self.template_name,
                 context)
+
+
+class InstructorDelete(View):
+    def get(self, request, pk):
+        instructor = self.get_object(pk)
+        sections = instructor.sections.all()
+        if sections.count() > 0:
+            return render(
+                request,
+                'courseinfo/instructor_refuse_delete.html',
+                {'instructor' : instructor,
+                'sections' : sections,
+                }
+            )
+        else:
+            return render(
+                request,
+                'courseinfo/instructor_confirm_delete.html',
+                {'instructor' : instructor}
+                )
+
+    def get_object(self, pk):
+        return get_object_or_404(
+                Instructor,
+                pk=pk)
+
+    def post(self, request, pk):
+        instructor=self.get_object(pk)
+        instructor.delete()
+        return redirect('courseinfo_instructor_list_urlpattern')
+
+
+class InstructorDelete(View):
+    def get(self, request, pk):
+        instructor = self.get_object(pk)
+        sections = instructor.sections.all()
+        if sections.count() > 0:
+            return render(
+                request,
+                'courseinfo/instructor_refuse_delete.html',
+                {'instructor' : instructor,
+                'sections' : sections,
+                }
+            )
+        else:
+            return render(
+                request,
+                'courseinfo/instructor_confirm_delete.html',
+                {'instructor' : instructor}
+                )
+
+    def get_object(self, pk):
+        return get_object_or_404(
+                Instructor,
+                pk=pk)
+
+    def post(self, request, pk):
+        instructor=self.get_object(pk)
+        instructor.delete()
+        return redirect('courseinfo_instructor_list_urlpattern')
+
+
+class SectionDelete(View):
+    def get(self, request, pk):
+        section = self.get_object(pk)
+        registrations = section.registrations.all()
+        if registrations.count() > 0:
+            return render(
+                request,
+                'courseinfo/section_refuse_delete.html',
+                {'registrations' : registrations,
+                }
+            )
+        else:
+            return render(
+                request,
+                'courseinfo/section_confirm_delete.html',
+                {'registrations' : registrations}
+                )
+
+    def get_object(self, pk):
+        return get_object_or_404(
+                Section,
+                pk=pk)
+
+    def post(self, request, pk):
+        section = self.get_object(pk)
+        section.delete()
+        return redirect('courseinfo_section_list_urlpattern')
+
+
+class CourseDelete(View):
+    def get(self, request, pk):
+        course = self.get_object(pk)
+        sections = course.sections.all()
+        if sections.count() > 0:
+            return render(
+                request,
+                'courseinfo/course_refuse_delete.html',
+                {'course' : course,
+                'sections' : sections,
+                }
+            )
+        else:
+            return render(
+                request,
+                'courseinfo/course_confirm_delete.html',
+                {'course' : course}
+                )
+
+    def get_object(self, pk):
+        return get_object_or_404(
+                Course,
+                pk=pk)
+
+    def post(self, request, pk):
+        course=self.get_object(pk)
+        course.delete()
+        return redirect('courseinfo_course_list_urlpattern')
+
+
+class SemesterDelete(View):
+    def get(self, request, pk):
+        semester = self.get_object(pk)
+        sections = semester.sections.all()
+        if sections.count() > 0:
+            return render(
+                request,
+                'courseinfo/semester_refuse_delete.html',
+                {'semester' : semester,
+                'sections' : sections,
+                }
+            )
+        else:
+            return render(
+                request,
+                'courseinfo/semester_confirm_delete.html',
+                {'semester' : semester}
+                )
+
+    def get_object(self, pk):
+        return get_object_or_404(
+                Course,
+                pk=pk)
+
+    def post(self, request, pk):
+        semester=self.get_object(pk)
+        semester.delete()
+        return redirect('courseinfo_semester_list_urlpattern')
+
+
+class StudentDelete(View):
+    def get(self, request, pk):
+        student = self.get_object(pk)
+        registrations = student.registrations.all()
+        if registrations.count() > 0:
+            return render(
+                request,
+                'courseinfo/student_refuse_delete.html',
+                {'registrations' : registrations,
+                }
+            )
+        else:
+            return render(
+                request,
+                'courseinfo/student_confirm_delete.html',
+                {'registrations' : registrations}
+                )
+
+    def get_object(self, pk):
+        return get_object_or_404(
+            Student,
+                pk=pk)
+
+    def post(self, request, pk):
+        student = self.get_object(pk)
+        student.delete()
+        return redirect('courseinfo_student_list_urlpattern')
+
+
+class RegistrationDelete(View):
+    def get(self, request, pk):
+        registration = self.get_object(pk)
+
+        return render(
+                request,
+                'courseinfo/registration_confirm_delete.html',
+                {'registration' : registration}
+                )
+
+    def get_object(self, pk):
+        return get_object_or_404(
+            Registration,
+                pk=pk)
+
+    def post(self, request, pk):
+        registration=self.get_object(pk)
+        registration.delete()
+        return redirect('courseinfo_registration_list_urlpattern')
