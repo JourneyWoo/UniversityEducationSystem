@@ -8,13 +8,15 @@
     <h2>{{ instructor }}</h2>
     <ul>
         <li>
-            <a href="{{ instructor.get_update_url }}">
+            <a href="{{ instructor.get_update_url }}"
+               class="button">
                 Edit Instructor
             </a>
         </li>
 
         <li>
-            <a href="{{instructor.get_delete_url}}">
+            <a href="{{instructor.get_delete_url}}"
+               class="button">
                 Delete Instructor</a>
         </li>
     </ul>
